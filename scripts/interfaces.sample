@@ -1,0 +1,17 @@
+ 
+ # The loopback network interface
+ auto lo br0
+ iface lo inet loopback
+ 
+ # Set up interfaces manually, avoiding conflicts with, e.g., network manager
+ iface eth0 inet manual
+
+ iface eth1 inet manual
+
+ # Bridge setup
+ iface br0 inet static
+        bridge_ports eth0 eth1
+        address 192.168.1.2
+        broadcast 192.168.1.255
+        netmask 255.255.255.0
+        gateway 192.168.1.1
