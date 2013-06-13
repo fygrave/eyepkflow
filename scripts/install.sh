@@ -14,10 +14,10 @@ apt-get install libglib2.0-dev
 wget http://wiresharkdownloads.riverbed.com/wireshark/src/all-versions/wireshark-1.6.7.tar.bz2
 
 tar xvfj wireshark-1.6.7.tar.bz2
-cd wireshark-1.10.0 && ./configure --disable-wireshark
+cd wireshark-1.6.7 && ./configure --disable-wireshark
 cd ..
 git clone https://github.com/armenb/sharktools
-cd sharktools && ./configure --with-wireshark-src=wireshark-1.10.0 --enable-pyshark && make && make install
+cd sharktools && ./configure --with-wireshark-src=wireshark-1.6.7 --enable-pyshark && make && make install
 cp src/pyshark.so  /usr/local/lib/python2.7/dist-packages/
 git clone https://code.google.com/p/pyflowtools/
 
