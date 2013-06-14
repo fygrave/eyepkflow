@@ -8,5 +8,6 @@ urlpatterns = patterns('',
     url(r'^home', 'ddosui.views.home'),
     url(r'^alerts', 'ddosui.views.alerts'),
     url(r'^system', 'ddosui.views.system'),
+    url(r'^graph', 'ddosui.views.graph'),
     url(r'^logout', 'ddosui.views.logout'),
 )
