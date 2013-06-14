@@ -53,3 +53,11 @@ var x = new Collector(function (err) {
 
  } )
 .listen(3003);
+
+
+
+process.on('uncaughtException', function(err) {
+  console.log("Uncaught Error " + err);
+});
+
+
