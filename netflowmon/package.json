@@ -1,0 +1,15 @@
+
+{
+    "name":"netflow-collect",
+    "version": "0.0.1",
+    "description":"passive netflow monitoring",
+    "author":{ "name":"Fyodor Y","email":"fygrave@o0o.nu"},
+
+"dependencies":{
+    "Netflow":"",
+    "geoip-lite":"",
+    "node-statsd":""
+}
+
+}
+
