@@ -1,7 +1,7 @@
 #0!/bun.bash
 
 apt-get install ethtool
-apt-get install python-pip
+apt-get install python-pip python-dev
 
 apt-get install flow-tools
 apt-get install fprobe
