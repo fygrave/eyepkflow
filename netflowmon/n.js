@@ -17,8 +17,8 @@ var x = new Collector(function (err) {
 	packet.v5Flows.forEach(function(item) {
 		console.log("packs " + item.dPkts);
 
-		sdc.increment('flow.packets', item.dPkts);
-		sdc.increment('flow.bytes', item.dOctets);
+		sdc.increment('flow.packets.total', item.dPkts);
+		sdc.increment('flow.bytes.total', item.dOctets);
 		sdc.increment('flow.packets.' + item.prot, item.dPkts);
 		sdc.increment('flow.bytes.' + item.prot, item.dOctets);
 		sdc.increment('flowsport.packets.' + item.srcport, item.dPkts);
