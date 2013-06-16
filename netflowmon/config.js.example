@@ -1,0 +1,7 @@
+var config = {}
+
+config.statsd.host = "localhost";
+config.statsd.port = 8125;
+
+
+module.exports = config;
