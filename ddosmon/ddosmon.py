@@ -81,7 +81,7 @@ def dopcap(filename):
 					"src": p["ip.src"],
 					"dst": p["ip.dst"],
 					"date": datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")
-			}, index_name, "httpl-type");
+			}, index_name, "httpl-type")
 
 	    except Exception, e:
 		print e
