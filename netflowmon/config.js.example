@@ -1,5 +1,6 @@
 var config = {}
 
+config.statsd = {};
 config.statsd.host = "localhost";
 config.statsd.port = 8125;
 
