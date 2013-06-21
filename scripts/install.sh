@@ -1,15 +1,15 @@
 #0!/bun.bash
 
-apt-get install ethtool
-apt-get install python-pip python-dev
+apt-get install -y  ethtool
+apt-get install -y  python-pip python-dev
 
-apt-get install flow-tools
-apt-get install fprobe
-apt-get install bridge-utils
+apt-get install -y  flow-tools
+apt-get install -y  fprobe
+apt-get install -y  bridge-utils
 
-apt-get install wireshark wireshark-dev
-apt-get install bison flex libpcap-dev
-apt-get install libglib2.0-dev
+apt-get install -y  wireshark wireshark-dev
+apt-get install -y  bison flex libpcap-dev
+apt-get install -y  libglib2.0-dev
 #wget http://wiresharkdownloads.riverbed.com/wireshark/src/wireshark-1.10.0.tar.bz2
 wget http://wiresharkdownloads.riverbed.com/wireshark/src/all-versions/wireshark-1.6.7.tar.bz2
 
@@ -21,7 +21,7 @@ cd sharktools && ./configure --with-wireshark-src=`pwd`/../wireshark-1.6.7 --ena
 cp src/pyshark.so  /usr/local/lib/python2.7/dist-packages/
 git clone https://code.google.com/p/pyflowtools/
 
-apt-get install netsniff-tools
+apt-get install -y  netsniff-tools
 
 
 # brctl addbr br0
@@ -29,4 +29,4 @@ apt-get install netsniff-tools
 # brctl addif br0 eth0 eth1
 
 
-pip install virtenv
+pip install -y  virtenv
