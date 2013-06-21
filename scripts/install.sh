@@ -29,4 +29,4 @@ apt-get install -y  netsniff-tools
 # brctl addif br0 eth0 eth1
 
 
-pip install -y  virtenv
+pip install   virtenv
