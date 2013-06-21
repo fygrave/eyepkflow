@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # statsd + graphite
-apt-get install python-dev python-pip python-cairo
-apt-get install libapache2-mod-wsgi
+apt-get install -y  python-dev python-pip python-cairo
+apt-get install -y  libapache2-mod-wsgi
 git clone https://github.com/etsy/statsd.git
 pip install graphite-web pip install  pytz python-pyparsing tagging python-memcache ldap python-rrdtool
 pip install warden
