@@ -1,5 +1,6 @@
 #!/bin/bash
 
+apt-get install -y build-essential
 # statsd + graphite
 apt-get install -y  python-dev python-pip python-cairo
 apt-get install -y  libapache2-mod-wsgi
