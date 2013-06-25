@@ -66,7 +66,7 @@ yaraengine =  yara.load_rules(rules_rootpath = "%s/yara" % os.path.dirname(os.pa
 def dofilter(s):
     return "".join(filter(lambda x: ord(x)<128, s))
 
-def yarascan(self, data):
+def yarascan(data):
 #    js = jsunpack.jsunpackn.jsunpack("/tmp/a", ['', data, "/tmp/a"], self.jsunpackopts)
 #    print js
     rez = ''
@@ -82,6 +82,7 @@ def yarascan(self, data):
 
 def dopcap(filename):
     packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type'], 'ip')
+	os.unlink(filename)
     packs = list(packs)
     c = statsd.StatsClient(host = sys.argv[2], port = 8125)
     packs = list(packs)
@@ -108,11 +109,9 @@ def dopcap(filename):
                         "dst": p["ip.dst"],
                         "date": datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")
                 }, index_name, "httpl-type")
-
         except Exception, e:
             print e
 
-	os.unlink(filename)
 
 for dirname, dirnames, filenames in os.walk('/data/'):
 	for f in filenames:
