@@ -64,6 +64,8 @@ yaraengine =  yara.load_rules(rules_rootpath = "%s/yara" % os.path.dirname(os.pa
 
 
 def dofilter(s):
+    s= s.replace(':','')
+    s=s.decode('hex')
     return "".join(filter(lambda x: ord(x)<128, s))
 
 def yarascan(data):
@@ -75,7 +77,6 @@ def yarascan(data):
         for item in y[m]:
             if item["matches"]:
                 rez ='%s %s'% (rez,item["rule"])
-    #print rez
     return rez
 
 
