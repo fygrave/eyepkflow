@@ -82,7 +82,7 @@ def yarascan(data):
 
 def dopcap(filename):
     packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type'], 'ip')
-	os.unlink(filename)
+    os.unlink(filename)
     packs = list(packs)
     c = statsd.StatsClient(host = sys.argv[2], port = 8125)
     packs = list(packs)
