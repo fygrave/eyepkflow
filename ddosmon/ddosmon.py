@@ -74,48 +74,43 @@ def yarascan(self, data):
     for m in y.keys():
         for item in y[m]:
             if item["matches"]:
-                rez ='%s %s'% (rez,item["rule"]))
+                rez ='%s %s'% (rez,item["rule"])
     #print rez
     return rez
 
 
 
 def dopcap(filename):
-	packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type'], 'ip')
+    packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type'], 'ip')
+    packs = list(packs)
+    c = statsd.StatsClient(host = sys.argv[2], port = 8125)
+    packs = list(packs)
+    for p in packs:
+        try:
+            c.incr('packets')
+            match = ''
+            if p.has_key('tcp.data'):
+                match = yarascan(p["tcp.data"])
 
-	packs = list(packs)
+            if p.has_key('http.request.uri') and p.has_key('http.user_agent'):
+                #print p
+                cc = ''
+                if  p.has_key('http.content_type'):
+                    cc = p["http.content_type"][0]
+                c.gauge('urllen', len(p["http.request.uri"][0]))
+                c.gauge('agentlen', len(p["http.user_agent"][0]))
+                conn.index({"host": p["http.host"][0],
+                        "agent": p["http.user_agent"][0],
+                        "uri": p["http.request.uri"][0],
+                        "content_type": cc,
+                        "match": match,
+                        "src": p["ip.src"],
+                        "dst": p["ip.dst"],
+                        "date": datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                }, index_name, "httpl-type")
 
-	c = statsd.StatsClient(host = sys.argv[2], port = 8125)
-
-
-
-	packs = list(packs)
-	for p in packs:
-	    try:
-		c.incr('packets')
-        match = ''
-        if p.has_key('tcp.data'):
-            match = yarascan(p["tcp.data"])
-
-		if p.has_key('http.request.uri') and p.has_key('http.user_agent'):
-			#print p
-			cc = ''
-			if  p.has_key('http.content_type'):
-				cc = p["http.content_type"][0]
-			c.gauge('urllen', len(p["http.request.uri"][0]))
-			c.gauge('agentlen', len(p["http.user_agent"][0]))
-			conn.index({"host": p["http.host"][0],
-				    "agent": p["http.user_agent"][0],
-				    "uri": p["http.request.uri"][0],
-				    "content_type": cc,
-                    "match": match,
-					"src": p["ip.src"],
-					"dst": p["ip.dst"],
-					"date": datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")
-			}, index_name, "httpl-type")
-
-	    except Exception, e:
-		print e
+        except Exception, e:
+            print e
 
 	os.unlink(filename)
 
