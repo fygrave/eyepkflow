@@ -1,3 +1,14 @@
+rule HangOverAgent
+{
+    meta:
+        ref="https://github.com/jaimeblasco/AlienvaultLabs/blob/master/malware_analysis/Hangover/hangover.yar"
+    strings:
+        $ua = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV2)"
+    condition:
+        1 of them
+
+
+}
 rule Apt1Agent
 {
 	meta:
