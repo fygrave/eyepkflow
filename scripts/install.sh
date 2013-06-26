@@ -1,7 +1,13 @@
-#0!/bun.bash
+#!/bin/bash
 
-WIRESHARK_V="1.6.7"
-#WIRESHARK_V="1.8.2"
+if [ x$WIRESHARK_V = x  ]
+then 
+    echo "wireshark version is not set.do export WIRESHARK_v=1.8.2 to compile "
+    #WIRESHARK_V="1.6.7" 
+    WIRESHARK_V=`wireshark -v | head -1 | cut -f 2 -d ' '`
+    echo "compiling for wireshak $WIRESHARK_V (detected)"
+fi
+#do WIRESHARK_V="1.8.2";export WIRESHARK_V
 
 apt-get install -y  ethtool
 apt-get install -y  python-pip python-dev
