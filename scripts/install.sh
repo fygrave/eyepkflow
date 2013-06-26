@@ -1,5 +1,8 @@
 #0!/bun.bash
 
+WIRESHARK_V="1.6.7"
+#WIRESHARK_V="1.8.2"
+
 apt-get install -y  ethtool
 apt-get install -y  python-pip python-dev
 
@@ -11,13 +14,13 @@ apt-get install -y  wireshark wireshark-dev
 apt-get install -y  bison flex libpcap-dev
 apt-get install -y  libglib2.0-dev
 #wget http://wiresharkdownloads.riverbed.com/wireshark/src/wireshark-1.10.0.tar.bz2
-wget http://wiresharkdownloads.riverbed.com/wireshark/src/all-versions/wireshark-1.6.7.tar.bz2
+wget http://wiresharkdownloads.riverbed.com/wireshark/src/all-versions/wireshark-$WIRESHARK_V.tar.bz2
 
-tar xvfj wireshark-1.6.7.tar.bz2
-cd wireshark-1.6.7 && ./configure --disable-wireshark
+tar xvfj wireshark-$WIRESHARK_V.tar.bz2
+cd wireshark-$WIRESHARK_V && ./configure --disable-wireshark
 cd ..
 git clone https://github.com/armenb/sharktools
-cd sharktools && ./configure --with-wireshark-src=`pwd`/../wireshark-1.6.7 --enable-pyshark && make && make install
+cd sharktools && ./configure --with-wireshark-src=`pwd`/../wireshark-$WIRESHARK_V --enable-pyshark && make && make install
 cp src/pyshark.so  /usr/local/lib/python2.7/dist-packages/
 git clone https://code.google.com/p/pyflowtools/
 
@@ -29,4 +32,6 @@ apt-get install -y  netsniff-tools
 # brctl addif br0 eth0 eth1
 
 
-pip install   virtenv
+pip install   virtualenv
+pip install --upgrade distribute
+pip install yara
