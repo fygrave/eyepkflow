@@ -4,6 +4,17 @@ rule Apt1Agent
 		ref="APT-1"
 	strings:
 		$ua = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; )"
+        $ua1 = "Mozilla/4.0 (compatible; MSIE8.0; Windows NT 5.1)"
+        $ua2 = "Mozilla/4.0 (compatible; Windows NT 5.1; MSIE 7.0; Trident/4.0)"
+        $ua3 = "Mozilla/4.0 (compatible; Windows NT 5.1; MSIE 7.0)"
+        $ua4 = "User-Agent: Mozilla/4.0 (compatible; MSIE 5.00; Windows 98) KSMM"
+        $ua5 = "Mozilla/4.0 (compatible; )"
+        $ua6 = ""IPHONE8.5(host:"
+        $ua7 = "Mozilla/5.0 (Windows; Windows NT 5.1; en-US; rv:1.8.0.12) Firefox/1.5.0.12"
+        $ua8 =  "Mozilla/4.0 (compatible; MSIE 6.1; Windows NT 5.1; SV1)"
+        $adspace = "<!---HEADER ADSPACE style="
+        $letusgo = "/letusgo"
+
 	condition:
 		1 of them
 
