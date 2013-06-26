@@ -64,6 +64,8 @@ yaraengine =  yara.load_rules(rules_rootpath = "%s/yara" % os.path.dirname(os.pa
 
 
 def dofilter(s):
+    if type(s) == list:
+        s = "".join(s)
     s= s.replace(':','')
     s=s.decode('hex')
     return "".join(filter(lambda x: ord(x)<128, s))
