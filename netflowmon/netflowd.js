@@ -1,6 +1,5 @@
 var geo = require('geoip-lite');
 var querystring = require('querystring'),
-datefmt = require("./datefmt"),
 curl = require('curl');
 
 
