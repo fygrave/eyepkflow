@@ -44,6 +44,8 @@ function sendEsper(item) {
    m.src_port = item.srcport;
    m.dst_port  = item.dstport;
    m.proto = getprotoent(item.prot);
+   m.bytes = item.dOctets;
+   m.packets = item.dPkts;
 	    
    var s = querystring.stringify(m);
    var cep = config.esper.url + s;
