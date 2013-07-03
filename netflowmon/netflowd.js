@@ -1,4 +1,8 @@
 var geo = require('geoip-lite');
+var querystring = require('querystring'),
+datefmt = require("./datefmt"),
+curl = require('curl');
+
 
 var config = require('./config');
 
@@ -33,6 +37,22 @@ function logIP(addr, item) {
 
 
 }
+function sendEsper(item) {
+   var m = {};
+   m.date = item.date;
+   m.src = item.srcaddr[0] + "." + item.srcaddr[1] + "." + item.srcaddr[2] + "." + item.srcaddr[3];
+   m.dst = item.dstaddr[0] + "." + item.dstaddr[1] + "." + item.dstaddr[2] + "." + item.dstaddr[3];
+   m.src_port = item.srcport;
+   m.dst_port  = item.dstport;
+   m.proto = getprotoent(item.prot);
+	    
+   var s = querystring.stringify(m);
+   var cep = config.esper.url + s;
+
+   console.log(JSON.stringify(m));
+   curl.get(cep, {}, function(err, response, body) { return 0;}); 	
+
+}
 
 var Collector=require("Netflow");
 var x = new Collector(function (err) {
@@ -55,6 +75,7 @@ var x = new Collector(function (err) {
 //		sdc.increment('flowdport.bytes.' + item.dstport, item.dOctets);
 		logIP(item.srcaddr, item);
 		logIP(item.dstaddr, item);
+        sendEsper(item);
 
 	});
 
