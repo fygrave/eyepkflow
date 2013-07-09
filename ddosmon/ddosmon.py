@@ -60,7 +60,7 @@ mapping = {
 conn.put_mapping("httpl-type", {'properties':mapping}, [index_name])
 
 
-yaraengine =  yara.load_rules(rules_rootpath = "%s/yara" % os.path.dirname(os.path.realpath(__file__)))
+yaraengine =  yara.load_rules(rules_rootpath = "%s/yrules" % os.path.dirname(os.path.realpath(__file__)))
 
 
 def dofilter(s):
