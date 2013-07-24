@@ -86,7 +86,7 @@ def yarascan(data):
 def dopcap(filename):
     packs  = []
     try:
-        packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type'], 'ip')
+        packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type', 'http.x_forwarded_for', 'http.x_real_ip'], 'ip')
     except Exception, e:
         print e
         os.unlink(filename)
@@ -105,6 +105,12 @@ def dopcap(filename):
             if p.has_key('http.request.uri') and p.has_key('http.user_agent'):
                 #print p
                 cc = ''
+                src = 'ip.src'
+                if p.has_key('http.x_forwarded_for'):
+                    src = p["http.x_forwarded_for"]
+                if p.has_key('http.x_real_ip'):
+                    src = p["http.x_real_ip'"]
+
                 if  p.has_key('http.content_type'):
                     cc = p["http.content_type"][0]
                 c.gauge('urllen', len(p["http.request.uri"][0]))
