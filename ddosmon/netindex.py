@@ -4,6 +4,8 @@ import statsd
 import sys
 import os
 import datetime
+import pika
+import redis
 import json
 from pyes import *
 import sys
