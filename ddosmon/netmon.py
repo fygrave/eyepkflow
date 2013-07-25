@@ -75,11 +75,18 @@ def dopcap(channel, filename):
 
                 if  p.has_key('http.content_type'):
                     cc = p["http.content_type"][0]
+                uri = p["http.request.uri"][0]
+                if uri.find('?') != -1:
+                    uri = uri[:uri.find('?')]
+                if uri.find('&') != -1:
+                    uri = uri[:uri.find('&')]
+
                 c.gauge('urllen', len(p["http.request.uri"][0]))
                 c.gauge('agentlen', len(p["http.user_agent"][0]))
                 message = {"host": p["http.host"][0],
                         "agent": p["http.user_agent"][0],
                         "uri": p["http.request.uri"][0],
+                        "uri_norm": uri,
                         "content_type": cc,
                         "match": match,
                         "src": src,
