@@ -42,7 +42,7 @@ def sendmsg(channel, msg):
                       properties=pika.BasicProperties(
                          delivery_mode = 2, # make message persistent
                       ))
-    print " [x] Sent %r" % (msg,)
+    #print " [x] Sent %r" % (msg,)
 
 
 
@@ -107,9 +107,12 @@ channel.queue_declare(queue='sniffer', durable=False)
 
 for dirname, dirnames, filenames in os.walk('/data/'):
 	for f in filenames:
-		filename = os.path.join(dirname, f)
-		print filename
-		dopcap(channel, filename)
+        try:
+            filename = os.path.join(dirname, f)
+            print filename
+            dopcap(channel, filename)
+        except Exception, e:
+            print "Error: ", e
 
 
 
