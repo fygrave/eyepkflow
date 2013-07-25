@@ -85,6 +85,8 @@ def callback(ch, method, properties, body):
         data = json.loads(body)
         conn.index(data, index_name, "httpl-type")
         # add stuff to redis here.
+        if isinstance(data["src"], list):
+            data["src"] = data["src"][0]
         reclient.zadd("ipsrc", data["src"])
         reclient.zadd("uri", data["uri_norm"])
         reclient.zadd(data["src"], data["uri_norm"])
