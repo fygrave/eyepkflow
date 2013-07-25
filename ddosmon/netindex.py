@@ -4,6 +4,7 @@ import statsd
 import sys
 import os
 import datetime
+import json
 from pyes import *
 import sys
 conn = ES([sys.argv[1]])

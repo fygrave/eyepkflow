@@ -7,6 +7,7 @@ import yara
 import os
 import datetime
 import sys
+import json
 import pika
 
 
