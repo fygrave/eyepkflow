@@ -87,9 +87,9 @@ def callback(ch, method, properties, body):
         # add stuff to redis here.
         if isinstance(data["src"], list):
             data["src"] = data["src"][0]
-        reclient.zadd("ipsrc", data["src"])
-        reclient.zadd("uri", data["uri_norm"])
-        reclient.zadd(data["src"], data["uri_norm"])
+        reclient.zadd("ipsrc", data["src"], 1)
+        reclient.zadd("uri", data["uri_norm"], 1)
+        reclient.zadd(data["src"], data["uri_norm"], 1)
         print " [x] Done"
         ch.basic_ack(delivery_tag = method.delivery_tag)
     except Exception, e:
