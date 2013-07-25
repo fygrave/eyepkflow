@@ -91,6 +91,7 @@ def callback(ch, method, properties, body):
         print " [x] Done"
         ch.basic_ack(delivery_tag = method.delivery_tag)
     except Exception, e:
+        ch.basic_ack(delivery_tag = method.delivery_tag)
         print "error ", e
 
 channel.basic_qos(prefetch_count=1)
