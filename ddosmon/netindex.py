@@ -11,6 +11,7 @@ from pyes import *
 import sys
 conn = ES([sys.argv[1]])
 MQHOST = sys.argv[2]
+reclient = redis.Redis(host='localhost', port='6833')
 
 index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
 try:
@@ -79,12 +80,18 @@ channel.queue_bind(exchange='sniffpack', queue='sniffer')
 print ' [*] Waiting for messages. To exit press CTRL+C'
 
 def callback(ch, method, properties, body):
-    print " [x] Received %r" % (body,)
-    data = json.loads(body)
-    conn.index(data, index_name, "httpl-type")
-    # add stuff to redis here.
-    print " [x] Done"
-    ch.basic_ack(delivery_tag = method.delivery_tag)
+    try:
+        print " [x] Received %r" % (body,)
+        data = json.loads(body)
+        conn.index(data, index_name, "httpl-type")
+        # add stuff to redis here.
+        reclient.zadd("ipsrc", data["src"])
+        reclient.zadd("uri", data["uri_norm"])
+        reclient.zadd(data["src"], data["uri_norm"])
+        print " [x] Done"
+        ch.basic_ack(delivery_tag = method.delivery_tag)
+    except Exception, e:
+        print "error ", e
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(callback,
