@@ -106,7 +106,7 @@ channel.queue_declare(queue='sniffer', durable=False)
 
 
 for dirname, dirnames, filenames in os.walk('/data/'):
-	for f in filenames:
+    for f in filenames:
         try:
             filename = os.path.join(dirname, f)
             print filename
