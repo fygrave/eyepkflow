@@ -41,7 +41,7 @@ def sendmsg(channel, msg):
                       properties=pika.BasicProperties(
                          delivery_mode = 2, # make message persistent
                       ))
-print " [x] Sent %r" % (msg,)
+    print " [x] Sent %r" % (msg,)
 
 
 
