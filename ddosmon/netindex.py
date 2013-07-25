@@ -11,7 +11,7 @@ from pyes import *
 import sys
 conn = ES([sys.argv[1]])
 MQHOST = sys.argv[2]
-reclient = redis.Redis(host='localhost', port='6833')
+reclient = redis.Redis(host='localhost', port=6833)
 
 index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
 try:
