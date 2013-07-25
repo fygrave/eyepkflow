@@ -37,11 +37,11 @@ def yarascan(data):
 def sendmsg(channel, msg):
     channel.basic_publish(exchange='sniffpack',
                       routing_key='sniffer',
-                      body=message,
+                      body=msg,
                       properties=pika.BasicProperties(
                          delivery_mode = 2, # make message persistent
                       ))
-print " [x] Sent %r" % (message,)
+print " [x] Sent %r" % (msg,)
 
 
 
