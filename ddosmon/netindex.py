@@ -13,6 +13,12 @@ conn = ES([sys.argv[1]])
 MQHOST = sys.argv[2]
 reclient = redis.Redis(host='localhost', port=6833)
 
+def getindex():
+    return 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
+
+def getstamp():
+    return '%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
+
 index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
 try:
     conn.create_index(index_name)
@@ -87,8 +93,8 @@ def callback(ch, method, properties, body):
         # add stuff to redis here.
         if isinstance(data["src"], list):
             data["src"] = data["src"][0]
-        reclient.zincrby("ipsrc", data["src"], 0.1)
-        reclient.zincrby("uri", data["uri_norm"], 0.1)
+        reclient.zincrby("ipsrc%s"%getstamp(), data["src"], 0.1)
+        reclient.zincrby("uri%s"%getstamp(), data["uri_norm"], 0.1)
         reclient.zincrby(data["src"], data["uri_norm"], 0.1)
         print " [x] Done"
         ch.basic_ack(delivery_tag = method.delivery_tag)
