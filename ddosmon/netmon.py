@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from processing import Pool
 import statsd
 import pyshark
 import sys
@@ -14,6 +15,8 @@ import pika
 MQHOST = sys.argv[1]
 
 yaraengine =  yara.load_rules(rules_rootpath = "%s/yrules" % os.path.dirname(os.path.realpath(__file__)))
+
+PROCS = 10
 
 
 def dofilter(s):
@@ -46,7 +49,9 @@ def sendmsg(channel, msg):
 
 
 
-def dopcap(channel, filename):
+def dopcap(arg):
+    channel = arg[0]
+    filename = arg[1]
     packs  = []
     try:
         packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type', 'http.x_forwarded_for', 'http.x_real_ip'], 'ip')
@@ -104,15 +109,20 @@ channel = connection.channel()
 channel.exchange_declare(exchange='sniffpack', type='fanout')
 channel.queue_declare(queue='sniffer', durable=False)
 
+ppool = Pool(PROCS)
+
+namez = []
+
 
 for dirname, dirnames, filenames in os.walk('/data/'):
     for f in filenames:
         try:
             filename = os.path.join(dirname, f)
-            print filename
-            dopcap(channel, filename)
+            namez.append((channel,  filename))
         except Exception, e:
             print "Error: ", e
 
 
 
+rez = ppool.mapAsync(dopcap, namez)
+rez.get(timeout = 30)
