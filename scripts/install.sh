@@ -41,3 +41,4 @@ apt-get install -y  netsniff-tools
 pip install   virtualenv
 pip install --upgrade distribute
 pip install yara
+pip install processing

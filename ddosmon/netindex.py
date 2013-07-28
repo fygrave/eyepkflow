@@ -87,7 +87,7 @@ print ' [*] Waiting for messages. To exit press CTRL+C'
 
 def callback(ch, method, properties, body):
     try:
-        print " [x] Received %r" % (body,)
+        #print " [x] Received %r" % (body,)
         data = json.loads(body)
         conn.index(data, index_name, "httpl-type")
         # add stuff to redis here.
@@ -96,7 +96,7 @@ def callback(ch, method, properties, body):
         reclient.zincrby("ipsrc%s"%getstamp(), data["src"], 0.1)
         reclient.zincrby("uri%s"%getstamp(), data["uri_norm"], 0.1)
         reclient.zincrby(data["src"], data["uri_norm"], 0.1)
-        print " [x] Done"
+        #print " [x] Done"
         ch.basic_ack(delivery_tag = method.delivery_tag)
     except Exception, e:
         ch.basic_ack(delivery_tag = method.delivery_tag)
