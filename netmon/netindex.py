@@ -14,7 +14,7 @@ MQHOST = sys.argv[2]
 reclient = redis.Redis(host='localhost', port=6833)
 
 def getindex():
-   index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
+    index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
     try:
         conn.create_index(index_name)
     except:
