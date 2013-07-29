@@ -106,7 +106,6 @@ def callback(ch, method, properties, body):
         ch.basic_ack(delivery_tag = method.delivery_tag)
         if (int(time.time()) % 7) == 0:
             conn.refresh()
-            print "Bulk flush"
     except Exception, e:
         ch.basic_ack(delivery_tag = method.delivery_tag)
         print "error ", e, " while parsing ", body
