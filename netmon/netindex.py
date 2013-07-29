@@ -93,6 +93,10 @@ def callback(ch, method, properties, body):
         # add stuff to redis here.
         if isinstance(data["src"], list):
             data["src"] = data["src"][0]
+        if isinstance(data["src"], list):
+            data["dst"] = data["dst"][0]
+        if data["src"].find(",") != -1:
+            data["src"] = data["src"][:data["src"].find(",") - 1]
         reclient.zincrby("ipsrc%s"%getstamp(), data["src"], 0.1)
         reclient.zincrby("uri%s"%getstamp(), data["uri_norm"], 0.1)
         reclient.zincrby(data["src"], data["uri_norm"], 0.1)
