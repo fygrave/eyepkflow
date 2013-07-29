@@ -14,17 +14,18 @@ MQHOST = sys.argv[2]
 reclient = redis.Redis(host='localhost', port=6833)
 
 def getindex():
-    return 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
+   index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
+    try:
+        conn.create_index(index_name)
+    except:
+        pass
+    return index_name
+
 
 def getstamp():
     return '%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
 
 index_name = 'httpl%.4i%.2i'% (datetime.datetime.now().year, datetime.datetime.now().month)
-try:
-    conn.create_index(index_name)
-except:
-    pass
-
 mapping = {
            u'uri': {'boost': 1.0,
                  'index': 'analyzed',
@@ -89,7 +90,6 @@ def callback(ch, method, properties, body):
     try:
         #print " [x] Received %r" % (body,)
         data = json.loads(body)
-        conn.index(data, index_name, "httpl-type")
         # add stuff to redis here.
         if isinstance(data["src"], list):
             data["src"] = data["src"][0]
@@ -97,6 +97,7 @@ def callback(ch, method, properties, body):
             data["dst"] = data["dst"][0]
         if data["src"].find(",") != -1:
             data["src"] = data["src"][:data["src"].find(",") - 1]
+        conn.index(data, index_name, "httpl-type")
         reclient.zincrby("ipsrc%s"%getstamp(), data["src"], 0.1)
         reclient.zincrby("uri%s"%getstamp(), data["uri_norm"], 0.1)
         reclient.zincrby(data["src"], data["uri_norm"], 0.1)
