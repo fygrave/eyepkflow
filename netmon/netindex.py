@@ -3,6 +3,7 @@
 import statsd
 import sys
 import os
+import time
 import datetime
 import pika
 import redis
@@ -97,12 +98,15 @@ def callback(ch, method, properties, body):
             data["dst"] = data["dst"][0]
         if data["src"].find(",") != -1:
             data["src"] = data["src"][:data["src"].find(",") - 1]
-        conn.index(data, index_name, "httpl-type")
+        conn.index(data, index_name, "httpl-type", bulk=True)
         reclient.zincrby("ipsrc%s"%getstamp(), data["src"], 0.1)
         reclient.zincrby("uri%s"%getstamp(), data["uri_norm"], 0.1)
         reclient.zincrby(data["src"], data["uri_norm"], 0.1)
         #print " [x] Done"
         ch.basic_ack(delivery_tag = method.delivery_tag)
+        if (int(time.time()) % 7) == 0:
+            conn.refresh()
+            print "Bulk flush"
     except Exception, e:
         ch.basic_ack(delivery_tag = method.delivery_tag)
         print "error ", e
