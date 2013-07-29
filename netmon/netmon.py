@@ -10,6 +10,7 @@ import datetime
 import sys
 import json
 import pika
+import time
 
 
 MQHOST = sys.argv[1]
@@ -116,16 +117,19 @@ ppool = Pool(PROCS)
 
 namez = []
 
+while [ 1 ]:
 
-for dirname, dirnames, filenames in os.walk('/data/'):
-    for f in filenames:
-        try:
-            filename = os.path.join(dirname, f)
-            namez.append( filename)
-        except Exception, e:
-            print "Error: ", e
+    for dirname, dirnames, filenames in os.walk('/data/'):
+        for f in filenames:
+            try:
+                filename = os.path.join(dirname, f)
+                namez.append( filename)
+            except Exception, e:
+                print "Error: ", e
 
 
 
-rez = ppool.mapAsync(dopcap, namez)
-rez.get(timeout = 30)
+    rez = ppool.mapAsync(dopcap, namez)
+    rez.get(timeout = 30)
+    print "Done. waiting for 10 sec"
+    time.sleep(10)
