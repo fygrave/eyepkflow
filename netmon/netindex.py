@@ -109,7 +109,7 @@ def callback(ch, method, properties, body):
             print "Bulk flush"
     except Exception, e:
         ch.basic_ack(delivery_tag = method.delivery_tag)
-        print "error ", e
+        print "error ", e, " while parsing ", body
 
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume(callback,
