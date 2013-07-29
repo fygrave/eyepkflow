@@ -37,6 +37,15 @@ def yarascan(data):
                 rez ='%s %s'% (rez,item["rule"])
     return rez
 
+def getMQchannel():
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+        host=MQHOST))
+    channel = connection.channel()
+    channel.exchange_declare(exchange='sniffpack', type='fanout')
+    channel.queue_declare(queue='sniffer', durable=False)
+    return channel
+
+
 
 def sendmsg(channel, msg):
     channel.basic_publish(exchange='sniffpack',
@@ -50,8 +59,9 @@ def sendmsg(channel, msg):
 
 
 def dopcap(arg):
-    channel = arg[0]
-    filename = arg[1]
+    channel = getMQchannel()
+    filename = arg
+    print filename
     packs  = []
     try:
         packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type', 'http.x_forwarded_for', 'http.x_real_ip'], 'ip')
@@ -102,13 +112,6 @@ def dopcap(arg):
         except Exception, e:
             print e
 
-
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host=MQHOST))
-channel = connection.channel()
-channel.exchange_declare(exchange='sniffpack', type='fanout')
-channel.queue_declare(queue='sniffer', durable=False)
-
 ppool = Pool(PROCS)
 
 namez = []
@@ -118,7 +121,7 @@ for dirname, dirnames, filenames in os.walk('/data/'):
     for f in filenames:
         try:
             filename = os.path.join(dirname, f)
-            namez.append((channel,  filename))
+            namez.append( filename)
         except Exception, e:
             print "Error: ", e
 
