@@ -129,7 +129,11 @@ while [ 1 ]:
 
 
 
-    rez = ppool.mapAsync(dopcap, namez)
-    rez.get(timeout = 30)
+    try:
+        rez = ppool.mapAsync(dopcap, namez)
+        rez.get(timeout = 30)
+    except Exception, e:
+        print "Error: ", e
+
     print "Done. waiting for 10 sec"
     time.sleep(10)
