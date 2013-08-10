@@ -73,7 +73,7 @@ mapping = {
 			'index': 'analyzed', 'store': 'yes', 'type': 'date', 'format': 'date_time'}
                 }
 
-conn.put_mapping("httpl-type", {'properties':mapping}, [index_name])
+conn.put_mapping("httpl-type", {'properties':mapping}, [getindex()])
 
 
 
@@ -98,7 +98,7 @@ def callback(ch, method, properties, body):
             data["dst"] = data["dst"][0]
         if data["src"].find(",") != -1:
             data["src"] = data["src"][:data["src"].find(",")]
-        conn.index(data, index_name, "httpl-type", bulk=True)
+        conn.index(data, getindex(), "httpl-type", bulk=True)
         reclient.zincrby("ipsrc%s"%getstamp(), data["src"], 0.1)
         reclient.zincrby("uri%s"%getstamp(), data["uri_norm"], 0.1)
         reclient.zincrby(data["src"], data["uri_norm"], 0.1)
