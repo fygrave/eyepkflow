@@ -142,6 +142,7 @@ class CloseEvent(ProcessEvent):
         task_queue.put("%s" %  os.path.join(event.path, event.name))
         print "Received: %s" % os.path.join(event.path, event.name)
 
+wm = WatchManager()
 
 notifier = Notifier(wm, CloseEvent())
 wdd = wm.add_watch('/data', pyinotify.IN_CLOSE_WRITE, rec=True)
