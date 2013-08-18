@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from processing import  Process, Queue, current_process, freeze_support
+from processing import  Process, Queue
 import statsd
 import pyshark
 import sys
@@ -139,7 +139,7 @@ for i in range(PROCS):
 
 class CloseEvent(ProcessEvent):
     def process_IN_CLOSE_WRITE(self, event):
-        task_queue.put("%s" %  os.path.join(event.path, event.name)))
+        task_queue.put("%s" %  os.path.join(event.path, event.name))
         print "Received: %s" % os.path.join(event.path, event.name)
 
 
