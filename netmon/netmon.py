@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from processing import Pool
+from processing import  Process, Queue, current_process, freeze_support
 import statsd
 import pyshark
 import sys
@@ -11,6 +11,10 @@ import sys
 import json
 import pika
 import time
+
+from pyinotify import WatchManager, Notifier, ThreadedNotifier, EventsCodes, ProcessEvent
+import pyinotify
+
 
 
 MQHOST = sys.argv[1]
@@ -113,27 +117,32 @@ def dopcap(arg):
         except Exception, e:
             print e
 
-ppool = Pool(PROCS)
-
-namez = []
-
-while [ 1 ]:
-
-    for dirname, dirnames, filenames in os.walk('/data/'):
-        for f in filenames:
-            try:
-                filename = os.path.join(dirname, f)
-                namez.append( filename)
-            except Exception, e:
-                print "Error: ", e
+def worker(inp, outp):
+    for arg in iter(inp.get, 'STOP'):
+        rez = dopcap(arg)
+        print "Done: %s" % arg
 
 
+task_queue = Queue()
+done_queue = Queue()
 
+for i in range(PROCS):
+    Process(target=worker, args=(task_queue, done_queue)).start()
+
+
+class CloseEvent(ProcessEvent):
+    def process_IN_CLOSE_WRITE(self, event):
+        task_queue.put("%s" %  os.path.join(event.path, event.name)))
+        print "Received: %s" % os.path.join(event.path, event.name)
+
+
+notifier = Notifier(wm, CloseEvent())
+wdd = wm.add_watch('/data', pyinotify.IN_CLOSE_WRITE, rec=True)
+while True:  # loop forever
     try:
-        rez = ppool.mapAsync(dopcap, namez)
-        rez.get(timeout = 30)
-    except Exception, e:
-        print "Error: ", e
-
-    print "Done. waiting for 10 sec"
-    time.sleep(10)
+        notifier.process_events()
+        if notifier.check_events():
+            notifier.read_events()
+    except KeyboardInterrupt:
+        notifier.stop()
+        break
