@@ -41,12 +41,12 @@ def dofilter(s):
 def yarascan(data):
 #    js = jsunpack.jsunpackn.jsunpack("/tmp/a", ['', data, "/tmp/a"], self.jsunpackopts)
 #    print js
-    rez = ''
+    rez = []
     y = yaraengine.match_data(dofilter(data))
     for m in y.keys():
         for item in y[m]:
             if item["matches"]:
-                rez ='%s %s'% (rez,item["rule"])
+                rez.append('yara:%s'% (item["rule"]))
     return rez
 
 def getMQchannel():
@@ -76,7 +76,7 @@ def dopcap(arg):
     print filename
     packs  = []
     try:
-        packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type', 'http.x_forwarded_for', 'http.x_real_ip'], 'ip')
+        packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type', 'http.x_forwarded_for', 'http.x_real_ip', 'smtp.req.parameter', 'smtp.resp.parameter'], 'ip')
     except Exception, e:
         print e
         os.unlink(filename)
@@ -92,10 +92,21 @@ def dopcap(arg):
             if p.has_key('tcp.data'):
                 match = yarascan(p["tcp.data"])
 
+            src = p['ip.src']
+            dst = p['ip.dst']
+            message = { "match": match,
+                        "src": src,
+                        "dst": p["ip.dst"],
+                        "date": datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")}
+            if p.has_key('smtp.resp.parameter') and p.has_key('smtp.req.parameter'):
+                message["smtpreq"] = p["smtp.resp.parameter"]
+                message["smtpresp"] = p["smtp.req.parameter"]
+                message["match"].append("proto: smtp")
+
+
             if p.has_key('http.request.uri') and p.has_key('http.user_agent'):
                 #print p
                 cc = ''
-                src = p['ip.src']
                 if p.has_key('http.x_forwarded_for'):
                     src = p["http.x_forwarded_for"]
                 if p.has_key('http.x_real_ip'):
@@ -120,6 +131,8 @@ def dopcap(arg):
                         "src": src,
                         "dst": p["ip.dst"],
                         "date": datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")}
+                #we log smtp traff. http traff or if packet payload matched our yara rule
+            if len(message["match"]) > 0 or message.has_key("host") or message.has_key("smtpresp"):
                 sendmsg(channel, json.dumps(message))
         except Exception, e:
             print e
