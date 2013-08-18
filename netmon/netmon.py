@@ -19,7 +19,14 @@ import pyinotify
 
 MQHOST = sys.argv[1]
 
-yaraengine =  yara.load_rules(rules_rootpath = "%s/yrules" % os.path.dirname(os.path.realpath(__file__)))
+yaraengine =  None
+
+try:
+    yaraengine =  yara.load_rules(rules_rootpath = "%s/yrules" % os.path.dirname(os.path.realpath(__file__)))
+except:
+    yaraengine =  yara.compile(filepath = "%s/yrules/web.yar" % os.path.dirname(os.path.realpath(__file__)))
+
+
 
 PROCS = 10
 
