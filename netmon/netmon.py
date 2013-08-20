@@ -139,7 +139,11 @@ def dopcap(arg):
 
 def worker(inp, outp):
     for arg in iter(inp.get, 'STOP'):
-        rez = dopcap(arg)
+        try:
+            rez = dopcap(arg)
+            os.unlink(arg)
+        except Exception, e:
+            print e
         print "Done: %s" % arg
 
 
