@@ -79,9 +79,7 @@ def dopcap(arg):
         packs = pyshark.read(filename, ['frame.time','ip.src', 'ip.dst', 'http.host', 'http.request.uri', 'http.user_agent', 'tcp.data','http.content_type', 'http.x_forwarded_for', 'http.x_real_ip', 'smtp.req.parameter', 'smtp.resp.parameter'], 'ip')
     except Exception, e:
         print e
-        os.unlink(filename)
         return
-    os.unlink(filename)
     packs = list(packs)
     c = statsd.StatsClient(host = sys.argv[2], port = 8125)
     packs = list(packs)
