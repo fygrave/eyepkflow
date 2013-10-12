@@ -160,7 +160,7 @@ class CloseEvent(ProcessEvent):
 wm = WatchManager()
 
 notifier = Notifier(wm, CloseEvent())
-wdd = wm.add_watch('/data', pyinotify.IN_CLOSE_WRITE, rec=True)
+wdd = wm.add_watch('/data2', pyinotify.IN_CLOSE_WRITE, rec=True)
 while True:  # loop forever
     try:
         notifier.process_events()
