@@ -77,43 +77,6 @@ mapping = {
 conn.put_mapping("httpl-type", {'properties':mapping}, [getindex()])
 
 
-
-
-print ' [*] Waiting for messages. To exit press CTRL+C'
-
-
-context = zmq.Context()
-socket = context.socket(zmq.SUB)
-socket.connect("tcp://127.0.0.1:3240")
-socket.setsockopt(zmq.SUBSCRIBE, "http")
-
-while True:
-    data = socket.recv()
-    data = data[data.find("http") + 5:]
-    darr = data.split("\t")
-    print darr
-    d = {}
-    srcip = darr[0].split(':')
-    dstip = darr[1].split(':')
-    d["src"] =srcip[0]
-    d["dst"] = dstip[0]
-    uri = darr[3]
-
-    if uri.find('?') != -1:
-        uri = uri[:uri.find('?')]
-    if uri.find('&') != -1:
-        uri = uri[:uri.find('&')]
-    d["uri"] = uri
-    d["uri_norm"] = uri
-    d["content-type"] = "unknown"
-    d["match"] = "none"
-    d["date"] =  datetime.datetime.fromtimestamp(p["frame.time"]).strftime("%Y-%m-%dT%H:%M:%S.000Z")
-    d["host"] = darr[2]
-    d["agent"] = "Unknown"
-
-
-    doindex(d)
-
 def doindex(data):
     try:
         #print " [x] Received %r" % (body,)
@@ -134,8 +97,39 @@ def doindex(data):
         ch.basic_ack(delivery_tag = method.delivery_tag)
         print "error ", e, " while parsing ", body
 
-channel.basic_qos(prefetch_count=1)
-channel.basic_consume(callback,
-                      queue='sniffer')
 
-channel.start_consuming()
+
+print ' [*] Waiting for messages. To exit press CTRL+C'
+
+
+context = zmq.Context()
+socket = context.socket(zmq.SUB)
+socket.connect("tcp://127.0.0.1:3240")
+socket.setsockopt(zmq.SUBSCRIBE, "http")
+
+while True:
+    data = socket.recv()
+    data = data[data.find("http") + 5:]
+    darr = data.split("\t")
+    d = {}
+    srcip = darr[0].split(':')
+    dstip = darr[1].split(':')
+    d["src"] =srcip[0]
+    d["dst"] = dstip[0]
+    uri = darr[3]
+
+    if uri.find('?') != -1:
+        uri = uri[:uri.find('?')]
+    if uri.find('&') != -1:
+        uri = uri[:uri.find('&')]
+    d["uri"] = uri
+    d["uri_norm"] = uri
+    d["content-type"] = "unknown"
+    d["match"] = "none"
+    d["date"] =  datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    d["host"] = darr[2]
+    d["agent"] = "Unknown"
+
+
+    doindex(d)
+
